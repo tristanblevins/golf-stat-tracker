@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+<title>Golf Stat Tracker</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+#holedata {
+	display: inline;
+	}
+</style>
+</head>
+<body>
+
+<?php
+	$holenum =+ (int)$_POST['holenum'];
+	$par ;
+	$fir;
+	$gir;
+	$putts;
+	$score;
+	$tot_par;
+	$tot_fir;
+	$tot_gir;
+	$tot_putts;
+	$tot_score;
+
+	
+	if($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$("holedata").show();
+		if ($holenum <= 17) {
+			$holenum += 1;
+			$tot_par += (int)$_POST['par'];
+			echo $tot_par;
+		}
+
+?>
+
+
+<!-- Display for hole number -->
+<div id="holedata">
+<p><h2 id="holenum"></h2></p>
+
+<!-- Table for data entry -->
+<form name="holedata" action="continue.html" method="post">
+<table id="holedatatable">
+	<tr>
+		<th>Par: </th>
+		<th><select id="par">
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option></select></th>
+	</tr>
+	<tr>
+		<td>Fairway: </td>
+		<td><select id="fir">
+			<option value="1">N/A</option>
+			<option value="2">Miss Left</option>
+			<option value="3">Hit Fairway</option>
+			<option value="4">Miss Right</option></select></td>
+	</tr>
+	<tr>
+		<td>Green in Regulation: </td>
+		<td><select id="gir">
+			<option value="1">Hit Green</option>
+			<option value="2">Missed Green</option></select></td>
+	</tr>
+	<tr>
+		<td>Putts: </td>
+		<td><select id="putts">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option></select></td>
+	</tr>
+	<tr>
+		<td>Score: </td>
+		<td><input id="score"></td>
+	</tr>
+	<tr class="buttonrow">
+		<td class="buttonrow"></td>
+		<td class="buttonrow"><input type="submit" name="submit" value="Next>>" class="buttonSubmit"/></td>
+	</tr>
+</table>
+</form>		
+</div>

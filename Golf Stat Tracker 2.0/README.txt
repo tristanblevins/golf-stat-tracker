@@ -1,0 +1,1 @@
+This application was built to run on XAMPP using Apache, mySQL, and phpMyAdmin.

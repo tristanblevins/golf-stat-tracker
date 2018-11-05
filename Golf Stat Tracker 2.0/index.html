@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+<title>Golf Stat Tracker</title>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+
+<!-- Display for hole number -->
+<div id="holedata">
+<p><h2 id="holenum"></h2></p>
+
+<!-- Table for data entry -->
+<table id="holedatatable">
+	<tr>
+		<th>Par: </th>
+		<th><select id="par">
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option></select>
+			
+		</th>
+	</tr>
+	<tr>
+		<td>Fairway: </td>
+		<td><select id="fir">
+			<option value="1">N/A</option>
+			<option value="2">Miss Left</option>
+			<option value="3">Hit Fairway</option>
+			<option value="4">Miss Right</option></select>
+			
+		</td>
+	</tr>
+	<tr>
+		<td>Green in Regulation: </td>
+		<td><select id="gir">
+			<option value="1">Hit Green</option>
+			<option value="2">Missed Green</option></select>
+			
+		</td>
+	</tr>
+	<tr>
+		<td>Putts: </td>
+		<td><select id="putts">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option></select>
+			
+		</td>
+	</tr>
+	<tr>
+		<td>Score: </td>
+		<td><input id="score">
+		
+		</td>
+	</tr>
+	<tr class="buttonrow">
+		<td class="buttonrow"></td>
+		<td class="buttonrow"><button type="button" id="next" onclick="recieveData()">Next>></button></td>
+	</tr>
+</table>		
+</div>
+
+<div id="errors">
+<h3 id="errortext"></h3>
+</div>
+
+<!-- This div is for monitoring stats as you enter them -->
+<div id="monitoring">
+<p id="puttcounter"> </p>
+<p id="totfwcounter"> </p>
+<p id="totgrncounter"> </p>
+<p id="fircounter"> </p>
+<p id="gircounter"> </p>
+<p id="puttspergir"> </p>
+<p id="scrambling"> </p>
+<p id="totalparcounter"> </p>
+<p id="scorecounter"> </p>
+
+</div>
+
+<!-- Intro div. This will disappear once you click "Get Started" -->
+<div id="intro">
+<p><h1>Golf Stat Tracker</h1></p>
+<p>Click the button to begin</p>
+<button id="demo" onclick="start()">Get Started</button>
+</div>
+
+
+
+<!-- Hidden divs uaed to copy javascript variables to what will be PHP variables -->
+<div id="finishform">
+<form id="finalstats" action="finish_page.php" method="post">
+	<input type="hidden" name="hiddenPar" id="hiddenPar" value="">
+	<input type="hidden" name="hiddenFir" id="hiddenFir" value="">
+	<input type="hidden" name="hiddenFml" id="hiddenFml" value="">
+	<input type="hidden" name="hiddenFmr" id="hiddenFmr" value="">
+	<input type="hidden" name="hiddenTotFws" id="hiddenTotFws" value="">
+	<input type="hidden" name="hiddenGir" id="hiddenGir" value="">
+	<input type="hidden" name="hiddenTotGrns" id="hiddenTotGrns" value="">
+	<input type="hidden" name="hiddenUpAndDowns" id="hiddenUpAndDowns" value="">
+	<input type="hidden" name="hiddenPutts" id="hiddenPutts" value="">
+	<input type="hidden" name="hiddenPuttsPerGir" id="hiddenPuttsPerGir" value="">
+	<input type="hidden" name="hiddenScore" id="hiddenScore" value="">
+<input type="submit" value="Add to Database">
+</form>
+</div>
+
+
+
+
+
+
+
+
+
+
+<script>
+//global variables
+var holeNumber = 0;
+var totalPar = 0;
+var totalScore = 0;
+var totalFairways = 0;
+var totalGreens = 0;
+var totalPutts = 0;
+var firPercent = 0;
+var girPercent = 0;
+var fairwaysHit = 0;
+var greensHit = 0;
+var girPutts = 0;
+var puttsPerGir = 0;
+var greensMissed = 0;
+var upAndDowns = 0;
+var scramblingPercent = 0;
+var fwMissedLeft = 0;
+var fwMissedRight = 0;
+
+//hide intro screen
+function start() {
+    var introScreen = document.getElementById('intro');
+	introScreen.style.visibility = 'hidden';
+	holeNumber = 1;
+	initHole();	
+}
+
+//setup initial hole
+function initHole() {
+	var holeData = document.getElementById('holedata');
+	holeData.style.display = 'inline';
+	document.getElementById('holenum').innerHTML = 'Hole ' + holeNumber;
+}
+
+function recieveData() {
+	
+	var counters = document.getElementById('monitoring');
+	var errors = document.getElementById('errors');
+	
+	
+if (document.getElementById('score').value != '') {
+	<!-- If not entering data for hole 18... -->
+	if (holeNumber < 18) {
+		
+		<!-- Go to next hole -->
+		holeNumber += 1;
+		document.getElementById('holenum').innerHTML = 'Hole ' + holeNumber;	
+	}
+	
+	<!-- Or prompt finish screen if you are on hole 18 -->
+	else if (holeNumber => 18) {
+		if (totalGreens < 18) {
+			document.getElementById('next').innerHTML = 'Finish';
+			document.getElementById('next').setAttribute( "onClick", "finish()" );
+			}
+	}
+		<!-- Add 1 to possible greens (this will ALWAYS == number of holes) -->
+		totalGreens += 1;
+		
+		<!-- Add to the running totals -->
+		
+		totalPar += parseInt(document.getElementById('par').value);
+		totalScore += parseInt(document.getElementById('score').value);
+		
+		<!-- FIRs are not possible on par 3s. Auto-set FIR to "N/A" if par 3 is selected. -->
+		if (document.getElementById('par').value == 3) {
+			document.getElementById('fir').value = 1;
+		}
+		
+		<!-- If fairway is hit, add 1 to total and fir count. If missed, add 1 to total. If no fairway, do nothing -->
+		if (document.getElementById('fir').value == 3) {
+			totalFairways += 1;
+			fairwaysHit += 1;
+		}
+		else if (document.getElementById('fir').value == 2){
+			totalFairways += 1;
+			fwMissedLeft += 1;
+		}
+		else if (document.getElementById('fir').value == 4){
+			totalFairways += 1;
+			fwMissedRight += 1;
+		}
+		else {totalFairways = totalFairways;}
+		
+		<!-- If green is hit, add 1 to total and gir count, and add putts/gir putts -->
+		if (document.getElementById('gir').value == 1) {
+			greensHit += 1;
+			totalPutts += parseInt(document.getElementById('putts').value);
+			girPutts += parseInt(document.getElementById('putts').value);
+		}
+		<!-- Keeping a greens missed stat to track scrambling % -->
+		else {
+			greensMissed += 1;
+			<!-- Add putts either way, but if green is missed, you got par or less, and putts = 1 then you achieved an up and down -->
+			totalPutts += parseInt(document.getElementById('putts').value);
+			if (parseInt(document.getElementById('putts').value) == 1 && parseInt(document.getElementById('score').value) <= parseInt(document.getElementById('par').value)) {
+				upAndDowns += 1;
+			}
+			
+		}
+		
+		<!-- Figure up the percentages to display -->
+		firPercent = (fairwaysHit / totalFairways) * 100;
+		girPercent = (greensHit / totalGreens) * 100;
+		if (greensMissed != 0){
+			scramblingPercent = (upAndDowns / greensMissed) * 100;}
+		else {
+			scramblingPercent = 0;}
+		puttsPerGir = (girPutts / greensHit);
+		
+		
+	
+	
+	
+	<!-- Display monitoring div -->
+	errors.style.display = 'none';
+	counters.style.display = 'inline';
+	document.getElementById('puttcounter').innerHTML = 'Putts: ' + totalPutts;
+	document.getElementById('totfwcounter').innerHTML = 'Total Fairways: ' + totalFairways;
+	document.getElementById('totgrncounter').innerHTML = 'Total Greens: ' + totalGreens;
+	document.getElementById('fircounter').innerHTML = 'FIR%: ' + fairwaysHit + ' of ' + totalFairways + ': ' + firPercent.toFixed(2) + '%';
+	document.getElementById('gircounter').innerHTML = 'GIR%: ' + greensHit + ' of ' + totalGreens + ': ' + girPercent.toFixed(2) + '%';
+	document.getElementById('totalparcounter').innerHTML = 'Total Par: ' + totalPar;
+	document.getElementById('scorecounter').innerHTML = 'Total Score: ' + totalScore;
+	document.getElementById('puttspergir').innerHTML = 'Putts Per GIR: ' + puttsPerGir.toFixed(2);
+	document.getElementById('scrambling').innerHTML = 'Scrambling: ' + scramblingPercent.toFixed(2);
+	
+}
+
+else {
+	counters.style.display = 'none';
+	errors.style.display = 'inline';
+	document.getElementById('errortext').innerHTML = 'Please enter a score!';
+}
+
+}
+function finish() {
+
+	var holeData = document.getElementById('holedata');
+	holeData.style.display = 'none';
+	var counters = document.getElementById('monitoring');
+	counters.style.display = 'inline';
+	var finishForm = document.getElementById('finishform');
+	finishForm.style.display = 'inline';
+	
+	<!-- Set hidden inputs equal to variables -->
+	document.getElementById('hiddenPutts').value = totalPutts;
+	document.getElementById('hiddenTotFws').value = totalFairways;
+	document.getElementById('hiddenTotGrns').value = totalGreens;
+	document.getElementById('hiddenFir').value = fairwaysHit;
+	document.getElementById('hiddenFml').value = fwMissedLeft;
+	document.getElementById('hiddenFmr').value = fwMissedRight;
+	document.getElementById('hiddenGir').value = greensHit;
+	document.getElementById('hiddenPar').value = totalPar;
+	document.getElementById('hiddenScore').value = totalScore;
+	document.getElementById('hiddenPuttsPerGir').value = puttsPerGir;
+	document.getElementById('hiddenUpAndDowns').value = upAndDowns;
+
+
+
+
+}
+</script>
+
+</body>
+
+</html>
